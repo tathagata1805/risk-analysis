@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid } from "@mui/material";
+import { Box, Typography, Grid, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import {
   LineChart,
@@ -15,12 +15,15 @@ import { API_DATA } from "./data/data";
 import Loading from "./components/Loading";
 import Search from "./components/Search";
 import ErrorBoundary from "./components/ErrorBoundary";
+import DetailsModal from "./components/DetailsModal";
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [riskData, setRiskData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLevelData, setSelectedLevelData] = useState(null);
 
   const handleSearch = () => {
     setLoading(true);
@@ -40,9 +43,18 @@ const App = () => {
     }, 2000); // Simulating loading time
   };
 
+  const handleShowDetails = (levelData) => {
+    setSelectedLevelData(levelData);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedLevelData(null);
+  };
+
   return (
     <ErrorBoundary>
-      {" "}
       {/* Wrap the app inside ErrorBoundary */}
       <Box
         sx={{
@@ -156,8 +168,26 @@ const App = () => {
                       width: "95%",
                       marginBottom: 3,
                       boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+                      position: "relative",
                     }}
                   >
+                    <Button
+                      sx={{
+                        position: "absolute",
+                        top: 16,
+                        right: 16,
+                        color: "white",
+                        textTransform: "none",
+                        fontSize: "16px",
+                        padding: "8px 8px",
+                        background: "blue",
+                        borderRadius: "5px",
+                      }}
+                      onClick={() => handleShowDetails(levelData)}
+                    >
+                      Show Details
+                    </Button>
+
                     <Typography variant="h6" color="white">
                       Level {levelData.level} Risk Percentage:{" "}
                       {levelData.risk_percentage}
@@ -195,6 +225,13 @@ const App = () => {
             </Grid>
           </motion.div>
         )}
+
+        {/* Modal for Showing Details */}
+        <DetailsModal
+          isModalOpen={isModalOpen}
+          handleCloseModal={handleCloseModal}
+          selectedLevelData={selectedLevelData}
+        />
       </Box>
     </ErrorBoundary>
   );
