@@ -19,14 +19,22 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [riskData, setRiskData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSearch = () => {
     setLoading(true);
+    setError(""); // Reset error message when starting a new search
     setTimeout(() => {
       const foundData = API_DATA.find(
         (item) => item.source_address === searchTerm
       );
-      setRiskData(foundData);
+
+      if (foundData) {
+        setRiskData(foundData);
+      } else {
+        setRiskData(null);
+        setError(`No data found for the entered address: ${searchTerm}.`);
+      }
       setLoading(false);
     }, 2000); // Simulating loading time
   };
@@ -60,6 +68,24 @@ const App = () => {
 
       {/* Loading Indicator */}
       {loading && <Loading />}
+
+      {/* Error Message */}
+      {error && (
+        <Box
+          sx={{
+            padding: 3,
+            borderRadius: 2,
+            marginBottom: 4,
+            width: "100%",
+            maxWidth: "600px",
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6" color="white">
+            {error}
+          </Typography>
+        </Box>
+      )}
 
       {/* Risk Data Display */}
       {riskData && !loading && (
