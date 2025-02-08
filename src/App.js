@@ -14,6 +14,7 @@ import {
 import { API_DATA } from "./data/data";
 import Loading from "./components/Loading";
 import Search from "./components/Search";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,154 +41,162 @@ const App = () => {
   };
 
   return (
-    <Box
-      sx={{
-        backgroundSize: "cover",
-        backgroundColor: "rgba(0, 0, 0, 0.7)",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "20px",
-        color: "white",
-      }}
-    >
-      {/* Page Title */}
-      <Typography variant="h3" color="white" gutterBottom>
-        Risk Analysis
-      </Typography>
+    <ErrorBoundary>
+      {" "}
+      {/* Wrap the app inside ErrorBoundary */}
+      <Box
+        sx={{
+          backgroundSize: "cover",
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "20px",
+          color: "white",
+        }}
+      >
+        {/* Page Title */}
+        <Typography variant="h3" color="white" gutterBottom>
+          Risk Analysis
+        </Typography>
 
-      {/* Search Input */}
-      <Search
-        setSearchTerm={setSearchTerm}
-        searchTerm={searchTerm}
-        handleSearch={handleSearch}
-        loading={loading}
-      />
+        {/* Search Input */}
+        <Search
+          setSearchTerm={setSearchTerm}
+          searchTerm={searchTerm}
+          handleSearch={handleSearch}
+          loading={loading}
+        />
 
-      {/* Loading Indicator */}
-      {loading && <Loading />}
+        {/* Loading Indicator */}
+        {loading && <Loading />}
 
-      {/* Error Message */}
-      {error && (
-        <Box
-          sx={{
-            padding: 3,
-            borderRadius: 2,
-            marginBottom: 4,
-            width: "100%",
-            maxWidth: "600px",
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h6" color="white">
-            {error}
-          </Typography>
-        </Box>
-      )}
-
-      {/* Risk Data Display */}
-      {riskData && !loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        >
-          {/* Address, Risk Level, and Risk Score */}
+        {/* Error Message */}
+        {error && (
           <Box
             sx={{
-              textAlign: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.7)",
               padding: 3,
               borderRadius: 2,
               marginBottom: 4,
               width: "100%",
               maxWidth: "600px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              marginLeft: "auto",
-              marginRight: "auto",
+              textAlign: "center",
             }}
           >
-            <Typography variant="h5" color="white">
-              Address: {riskData.source_address}
-            </Typography>
-            <Typography
-              variant="h6"
-              color={riskData.risk === "Highly Risky" ? "red" : "green"}
-            >
-              Risk Level: {riskData.risk}
-            </Typography>
-            <Typography variant="h6">
-              Risk Score: {riskData.risk_score}
+            <Typography variant="h6" color="white">
+              {error}
             </Typography>
           </Box>
+        )}
 
-          {/* Displaying Level-wise Risk Analysis and Charts */}
-          <Grid
-            container
-            spacing={3}
-            justifyContent="center"
-            sx={{ width: "100%" }}
+        {/* Risk Data Display */}
+        {riskData && !loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
           >
-            {riskData.level_vise_risk_analysis.map((levelData) => (
-              <Grid
-                item
-                xs={12}
-                key={levelData.level}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  width: "100%",
-                }}
+            {/* Address, Risk Level, and Risk Score */}
+            <Box
+              sx={{
+                textAlign: "center",
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                padding: 3,
+                borderRadius: 2,
+                marginBottom: 4,
+                width: "100%",
+                maxWidth: "600px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              <Typography variant="h5" color="white">
+                Address: {riskData.source_address}
+              </Typography>
+              <Typography
+                variant="h6"
+                color={riskData.risk === "Highly Risky" ? "red" : "green"}
               >
-                <Box
+                Risk Level: {riskData.risk}
+              </Typography>
+              <Typography variant="h6">
+                Risk Score: {riskData.risk_score}
+              </Typography>
+            </Box>
+
+            {/* Displaying Level-wise Risk Analysis and Charts */}
+            <Grid
+              container
+              spacing={3}
+              justifyContent="center"
+              sx={{ width: "100%" }}
+            >
+              {riskData.level_vise_risk_analysis.map((levelData) => (
+                <Grid
+                  item
+                  xs={12}
+                  key={levelData.level}
                   sx={{
-                    backgroundColor: "rgba(0, 0, 0, 0.8)",
-                    padding: 3,
-                    borderRadius: 2,
-                    width: "95%",
-                    marginBottom: 3,
-                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
                   }}
                 >
-                  <Typography variant="h6" color="white">
-                    Level {levelData.level} Risk Percentage:{" "}
-                    {levelData.risk_percentage}
-                  </Typography>
-                  <Typography variant="body1" color="white">
-                    Risky Entities: {levelData.risky_entities_count}
-                  </Typography>
-                  <Typography variant="body1" color="white">
-                    Non-risky Entities: {levelData.non_risky_entities_count}
-                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: "rgba(0, 0, 0, 0.8)",
+                      padding: 3,
+                      borderRadius: 2,
+                      width: "95%",
+                      marginBottom: 3,
+                      boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+                    }}
+                  >
+                    <Typography variant="h6" color="white">
+                      Level {levelData.level} Risk Percentage:{" "}
+                      {levelData.risk_percentage}
+                    </Typography>
+                    <Typography variant="body1" color="white">
+                      Risky Entities: {levelData.risky_entities_count}
+                    </Typography>
+                    <Typography variant="body1" color="white">
+                      Non-risky Entities: {levelData.non_risky_entities_count}
+                    </Typography>
 
-                  {/* Risk Data Chart */}
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart
-                      data={levelData.payer_details.map((item) => ({
-                        date: item.date,
-                        amount: item.amount,
-                      }))}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="date" />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      <Line type="monotone" dataKey="amount" stroke="#8884d8" />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </motion.div>
-      )}
-    </Box>
+                    {/* Risk Data Chart */}
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart
+                        data={levelData.payer_details.map((item) => ({
+                          date: item.date,
+                          amount: item.amount,
+                        }))}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="amount"
+                          stroke="#8884d8"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </motion.div>
+        )}
+      </Box>
+    </ErrorBoundary>
   );
 };
 
