@@ -62,7 +62,7 @@ const App = () => {
       {loading && <Loading />}
 
       {/* Risk Data Display */}
-      {riskData && !loading && riskData.length > 0 ? (
+      {riskData && !loading && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -160,12 +160,6 @@ const App = () => {
             ))}
           </Grid>
         </motion.div>
-      ) : (
-        <>
-          <Typography variant="h6" color="white" gutterBottom>
-            No Data Found! Try modifying the search term!
-          </Typography>
-        </>
       )}
     </Box>
   );
